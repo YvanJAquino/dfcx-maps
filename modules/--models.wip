@@ -1,0 +1,119 @@
+from typing import Union, Dict, Any, Optional, List
+from pydantic import BaseModel
+
+
+class FulfillmentInfo(BaseModel):
+    tag: str
+
+
+class IntentInfo(BaseModel):
+    lastMatchedIntent: str
+    displayName: str
+    parameters: Optional[Dict[str, Any]]
+    confidence: Optional[float]
+
+
+class PageInfo(BaseModel):
+    currentPage: str
+    formInfo: Optional[Dict[str, Any]]
+
+
+class SessionInfo(BaseModel):
+    session: str
+    parameters: Optional[Dict[str, Any]]
+
+
+class Text(BaseModel):
+    text: List[str]
+    redactedText: List[str]
+    allowPlaybackInterruption: Optional[bool]
+    source: Optional[str]
+
+
+class Payload(BaseModel):
+    payload: Dict[str, Any]
+
+
+class ConversationSuccess(BaseModel):
+    metadata: Dict[str, Any]
+
+
+class OutputAudioText(BaseModel):
+    allowPlaybackInterruption: Optional[bool]
+    text: Optional[str]
+    ssml: Optional[str]
+
+
+class LiveAgentHandoff(BaseModel):
+    metadata: Dict[str, Any]
+
+
+class EndInteration(BaseModel):
+    pass
+
+
+class PlayAudio(BaseModel):
+    audioUri: str
+    allowPlaybackInterruption: Optional[bool]
+
+
+class Segment(BaseModel):
+    allowPlaybackInterruption: Optional[bool]
+    audio: Optional[str]
+    uri: Optional[str]
+
+
+class MixedAudio(BaseModel):
+    segments: List[Segment]
+
+
+class ResponseMessage(BaseModel):
+    message: Union[
+        Text, 
+        Payload,
+        ConversationSuccess,
+        OutputAudioText,
+        LiveAgentHandoff,
+        EndInteration,
+        PlayAudio,
+        MixedAudio
+    ]
+    # text: Optional[Text]
+    # payload: Optional[Dict[str, Any]]
+    # conversationSuccess: Optional[conversationSuccess]
+    # outputAudioText: Optional[OutputAudioText]
+    # liveAgentHandoff: Optional[LiveAgentHandoff]
+    # endInteraction: Optional[EndInteration]
+    # playAudio: Optional[PlayAudio]
+    # mixedAudio: Optional[MixedAudio]
+
+
+class SentimentAnalysisResult(BaseModel):
+    score: float
+    magnitude: float
+
+
+class WebhookRequest(BaseModel):
+    detectIntentResponseId: str
+    languageCode: str
+    fuilfillmentInfo: FulfillmentInfo
+    intentInfo: Optional[IntentInfo]
+    pageInfo: PageInfo
+    sessionInfo: SessionInfo
+    messages: List[ResponseMessage]
+    payload: Optional[Dict[str, Any]]
+    sentimentAnalysisResult: Optional[SentimentAnalysisResult]
+    query: Optional[Dict[str, Any]]
+
+
+class FulfillmentResponse(BaseModel):
+    messages: List[ResponseMessage]
+    mergeBehavior: str
+
+
+class WebhookResponse(BaseModel):
+    fulfillmentResponse: FulfillmentResponse
+    pageInfo: Optional[PageInfo]
+    sessionInfo: SessionInfo
+    payload: Optional[Dict[str, Any]]
+    transition: Optional[Dict[str, Any]]
